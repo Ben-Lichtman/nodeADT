@@ -1,4 +1,4 @@
-#define TYPE					int
+#define TYPE				int
 
 typedef struct _avlTree avlTree;
 typedef avlTree * AvlTree;

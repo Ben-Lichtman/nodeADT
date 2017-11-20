@@ -34,7 +34,7 @@ void enqueue(queue * q, void * d)
 		return;
 	setData(n, d);
 	if(q->back)
-		linkNodeTo(q->back, 0, n);
+		linkNodeTo(q->back, n, 0);
 	else
 		q->front = n;
 	q->back = n;

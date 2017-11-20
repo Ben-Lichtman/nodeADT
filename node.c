@@ -27,15 +27,11 @@ void setData(node * n, void * data)
 
 void * getData(node * n)
 {
-	if(!n)
-		return NULL;
 	return n->data;
 }
 
 node * getChild(node * n, unsigned int index)
 {
-	if(!n || index >= n->children)
-		return NULL;
 	return n->child[index];
 }
 
@@ -45,7 +41,7 @@ void deleteNode(node * n)
 	free(n);
 }
 
-void linkNodeTo(node * n, unsigned int index, node * to)
+void linkNodeTo(node * n, node * to, unsigned int index)
 {
 	n->child[index] = to;
 }

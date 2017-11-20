@@ -11,6 +11,6 @@ node * getChild				(node *, unsigned int index);
 
 void deleteNode				(node *);
 
-void linkNodeTo				(node *, unsigned int index, node * to);
+void linkNodeTo				(node *, node * to, unsigned int index);
 
 void unlinkNodeFrom			(node *, int unsigned index);

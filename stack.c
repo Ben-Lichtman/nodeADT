@@ -31,7 +31,7 @@ void push(stack * s, void * d)
 	if(!n)
 		return;
 	setData(n, d);
-	linkNodeTo(n, 0, s->top);
+	linkNodeTo(n, s->top, 0);
 	s->top = n;
 }
 

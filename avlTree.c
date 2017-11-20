@@ -20,7 +20,7 @@ struct _avlTree
 static node * leftRot(node *);
 static node * rightRot(node *);
 static void recursiveDeleteNode(node *);
-static node * insertNode(node * root, node *, TYPE);
+static node * insertNode(node * root, node *);
 static node * removeNode(node * root, TYPE);
 static node * searchNode(node *, TYPE);
 static int maxSubHeight(node *);
@@ -54,7 +54,7 @@ void insertAvlTree(avlTree * t, void * d, TYPE key)
 	c->key = key;
 	c->height = 1;
 	setData(n, c);
-	t->root = insertNode(t->root, n, key);
+	t->root = insertNode(t->root, n);
 }
 
 void removeAvlTree(avlTree * t, TYPE key)
@@ -78,8 +78,8 @@ void * retrieveAvlTree(avlTree * t, TYPE key)
 static node * leftRot(node * root)
 {
 	node * newRoot = getChild(root, 1);
-	linkNodeTo(root, 1, getChild(newRoot, 0));
-	linkNodeTo(newRoot, 0, root);
+	linkNodeTo(root, getChild(newRoot, 0), 1);
+	linkNodeTo(newRoot, root, 0);
 	((dataContainer *)getData(root))->height = maxSubHeight(root)+1;
 	((dataContainer *)getData(newRoot))->height = maxSubHeight(newRoot)+1;
 	return newRoot;
@@ -88,8 +88,8 @@ static node * leftRot(node * root)
 static node * rightRot(node * root)
 {
 	node * newRoot = getChild(root, 0);
-	linkNodeTo(root, 0, getChild(newRoot, 1));
-	linkNodeTo(newRoot, 1, root);
+	linkNodeTo(root, getChild(newRoot, 1), 0);
+	linkNodeTo(newRoot, root, 1);
 	((dataContainer *)getData(root))->height = maxSubHeight(root)+1;
 	((dataContainer *)getData(newRoot))->height = maxSubHeight(newRoot)+1;
 	return newRoot;
@@ -101,21 +101,23 @@ static void recursiveDeleteNode(node * n)
 		return;
 	recursiveDeleteNode(getChild(n, 0));
 	recursiveDeleteNode(getChild(n, 1));
+	free((dataContainer *)getData(n));
 	deleteNode(n);
 }
 
-static node * insertNode(node * root, node * n, TYPE key)
+static node * insertNode(node * root, node * n)
 {
 	if(!root)
 		return n;
-	dataContainer * c = getData(root);
-	if(key < c->key)
-		linkNodeTo(root, 0, insertNode(getChild(root, 0), n, key));
-	else if(c->key < key)
-		linkNodeTo(root, 1, insertNode(getChild(root, 1), n, key));
+	dataContainer * rc = getData(root);
+	dataContainer * nc = getData(n);
+	if(nc->key < rc->key)
+		linkNodeTo(root, insertNode(getChild(root, 0), n), 0);
+	else if(rc->key < nc->key)
+		linkNodeTo(root, insertNode(getChild(root, 1), n), 1);
 	else
 		//Determine what to do in case of duplicates
-		linkNodeTo(root, 0, insertNode(getChild(root, 0), n, key));
+		linkNodeTo(root, insertNode(getChild(root, 0), n), 0);
 	return rebalance(root);
 }
 
@@ -125,22 +127,23 @@ static node * removeNode(node * root, TYPE key)
 		return NULL;
 	dataContainer * c = getData(root);
 	if(key < c->key)
-		linkNodeTo(root, 0, removeNode(getChild(root, 0), key));
+		linkNodeTo(root, removeNode(getChild(root, 0), key), 0);
 	else if(c->key < key)
-		linkNodeTo(root, 1, removeNode(getChild(root, 1), key));
+		linkNodeTo(root, removeNode(getChild(root, 1), key), 1);
 	else
 	{
 		node * replacement = NULL;
 		int balance = getBalance(root);
 		if(balance <= 0)
-			linkNodeTo(root, 0, scanRight(getChild(root, 0), &replacement));
+			linkNodeTo(root, scanRight(getChild(root, 0), &replacement), 0);
 		else
-			linkNodeTo(root, 1, scanLeft(getChild(root, 1), &replacement));
+			linkNodeTo(root, scanLeft(getChild(root, 1), &replacement), 1);
 		if(replacement)
 		{
-			linkNodeTo(replacement, 0, getChild(root, 0));
-			linkNodeTo(replacement, 1, getChild(root, 1));
+			linkNodeTo(replacement, getChild(root, 0), 0);
+			linkNodeTo(replacement, getChild(root, 1), 1);
 		}
+		free(getData(root));
 		deleteNode(root);
 		return rebalance(replacement);
 	}
@@ -156,8 +159,7 @@ static node * searchNode(node * root, TYPE key)
 		return searchNode(getChild(root, 0), key);
 	else if(c->key < key)
 		return searchNode(getChild(root, 1), key);
-	else
-		return root;
+	return root;
 }
 
 static int maxSubHeight(node * n)
@@ -183,14 +185,14 @@ static node * rebalance(node * n)
 	{
 		int childBalance = getBalance(getChild(n, 0));
 		if(childBalance > 0)
-			linkNodeTo(n, 0, leftRot(getChild(n, 0)));
+			linkNodeTo(n, leftRot(getChild(n, 0)), 0);
 		return rightRot(n);
 	}
 	else if(balance > 1)
 	{
 		int childBalance = getBalance(getChild(n, 1));
 		if(childBalance < 0)
-			linkNodeTo(n, 1, rightRot(getChild(n, 1)));
+			linkNodeTo(n, rightRot(getChild(n, 1)), 1);
 		return leftRot(n);
 	}
 	((dataContainer *)getData(n))->height = maxSubHeight(n)+1;
@@ -202,7 +204,7 @@ static node * scanLeft(node * n, node ** replacement)
 	if(!n)
 		return NULL;
 	if(getChild(n, 0))
-		linkNodeTo(n, 0, scanLeft(getChild(n, 0), replacement));
+		linkNodeTo(n, scanLeft(getChild(n, 0), replacement), 0);
 	else
 	{
 		*replacement = n;
@@ -216,7 +218,7 @@ static node * scanRight(node * n, node ** replacement)
 	if(!n)
 		return NULL;
 	if(getChild(n, 1))
-		linkNodeTo(n, 1, scanRight(getChild(n, 1), replacement));
+		linkNodeTo(n, scanRight(getChild(n, 1), replacement), 1);
 	else
 	{
 		*replacement = n;
