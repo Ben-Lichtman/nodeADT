@@ -4,8 +4,6 @@
 #include "node.h"
 
 typedef struct _dataContainer dataContainer;
-// typedef void (*dealloc)(void *);
-// typedef int (*cmp)(void *)(void *);
 
 struct _bsTree
 {
