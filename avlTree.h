@@ -1,16 +1,14 @@
-#define TYPE				int
-
 typedef struct _avlTree avlTree;
 typedef avlTree * AvlTree;
 
-avlTree * newAvlTree		();
+avlTree * newAvlTree		(int (*cmp)(void *, void *), void (*dealloc)(void *));
 
 void deleteAvlTree			(avlTree *);
 
-void insertAvlTree			(avlTree *, void *, TYPE key);
+void insertAvlTree			(avlTree *, void *);
 
-void removeAvlTree			(avlTree *, TYPE key);
+void removeAvlTree			(avlTree *, void *);
 
-int searchAvlTree			(avlTree *, TYPE key);
+int searchAvlTree			(avlTree *, void *);
 
-void * retrieveAvlTree		(avlTree *, TYPE key);
+void * retrieveAvlTree		(avlTree *, void *);
