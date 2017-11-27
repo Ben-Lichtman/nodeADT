@@ -9,7 +9,7 @@ struct _queue
 	node * back;
 };
 
-static void recursiveDeleteNode(node * n);
+static void recursiveDeleteNode(node *);
 
 queue * newQueue()
 {

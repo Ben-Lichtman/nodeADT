@@ -12,18 +12,18 @@ struct _avlTree
 	void (*dealloc)(void *);
 };
 
-static void recursiveDeleteNode(node * n, void (*dealloc)(void *));
-static node * insertNode(node * root, node *, int (*cmp)(void *, void *));
-static node * removeNode(node * root, void * d, int (*cmp)(void *, void *), void (*dealloc)(void *));
+static void recursiveDeleteNode(node *, void (*dealloc)(void *));
+static node * insertNode(node *, node *, int (*cmp)(void *, void *));
+static node * removeNode(node *, void *, int (*cmp)(void *, void *), void (*dealloc)(void *));
 static node * searchNode(node *, void *, int (*cmp)(void *, void *));
 
-static node * leftRot(node * root);
-static node * rightRot(node * root);
-static int height(node * n);
-static int balance(node * n);
-static node * rebalance(node * n);
-static node * scanLeft(node * n, node ** replacement);
-static node * scanRight(node * n, node ** replacement);
+static node * leftRot(node *);
+static node * rightRot(node *);
+static int height(node *);
+static int balance(node *);
+static node * rebalance(node *);
+static node * scanLeft(node *, node **);
+static node * scanRight(node *, node **);
 
 avlTree * newAvlTree(int (*cmp)(void * a, void * b), void (*dealloc)(void *))
 {

@@ -12,12 +12,12 @@ struct _bsTree
 	void (*dealloc)(void *);
 };
 
-static void recursiveDeleteNode(node * n, void (*dealloc)(void *));
-static node * insertNode(node * root, node *, int (*cmp)(void *, void *));
-static node * removeNode(node * root, void * d, int (*cmp)(void *, void *), void (*dealloc)(void *));
+static void recursiveDeleteNode(node *, void (*dealloc)(void *));
+static node * insertNode(node *, node *, int (*cmp)(void *, void *));
+static node * removeNode(node *, void *, int (*cmp)(void *, void *), void (*dealloc)(void *));
 static node * searchNode(node *, void *, int (*cmp)(void *, void *));
 
-static node * scanRight(node * n, node ** replacement);
+static node * scanRight(node *, node **);
 
 bsTree * newBsTree(int (*cmp)(void * a, void * b), void (*dealloc)(void *))
 {

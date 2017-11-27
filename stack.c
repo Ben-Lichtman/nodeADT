@@ -8,7 +8,7 @@ struct _stack
 	node * top;
 };
 
-static void recursiveDeleteNode(node * n);
+static void recursiveDeleteNode(node *);
 
 stack * newStack()
 {
