@@ -4,8 +4,6 @@
 #include "node.h"
 
 typedef struct _dataContainer dataContainer;
-// typedef void (*dealloc)(void *);
-// typedef int (*cmp)(void *)(void *);
 
 struct _avlTree
 {
@@ -109,9 +107,9 @@ static node * removeNode(node * root, void * d, int (*cmp)(void *, void *), void
 	{
 		node * replacement = NULL;
 		int bal = balance(root);
-		if(balance < 0)
+		if(bal < 0)
 			linkNodeTo(root, scanRight(getChild(root, 0), &replacement), 0);
-		else if(balance > 0)
+		else if(bal > 0)
 			linkNodeTo(root, scanLeft(getChild(root, 1), &replacement), 1);
 		else
 			//Default behaviour if balanced
@@ -162,7 +160,7 @@ static int height(node * n)
 		return 0;
 	int left = height(getChild(n, 0));
 	int right = height(getChild(n, 1));
-	return left > right ? left : right;
+	return left > right ? left + 1 : right + 1;
 }
 
 static int balance(node * n)
@@ -190,8 +188,8 @@ static node * rebalance(node * n)
 	{
 		int childBalance = balance(getChild(n, 1));
 		if(childBalance < 0)
-			linkNodeTo(n, leftRot(getChild(n, 1)), 1);
-		return rightRot(n);
+			linkNodeTo(n, rightRot(getChild(n, 1)), 1);
+		return leftRot(n);
 	}
 	return n;
 }
